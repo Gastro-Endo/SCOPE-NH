@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCOPE: Stepwise Colonoscopy Algorithm to Optimization Preparation in Endoscopy</title>
+  <style>
+    :root{
+      --bg:#f5f8fc;
+      --card:#ffffff;
+      --muted:#6b7a90;
+      --line:#d9e2ec;
+      --brand:#245ea8;
+      --brand-2:#487ec7;
+      --shadow: 0 2px 10px rgba(16,24,40,0.06);
+    }
+    html, body { background: var(--bg); color:#222; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 24px;
+      max-width: 1000px;
+      margin: 0 auto 40px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+    .header .logo {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #004F9F; /* Northern Health blue */
+      margin-right: auto; /* push title to center */
+    }
+    .header .title {
+      font-size: 1.15rem;
+      line-height: 1.4;
+      text-align: center;
+      color:#0f2744;
+      font-weight: 600;
+      flex:1;
+    }
+    .header .scope i {
+      font-style: normal;
+      font-weight: 800;
+      color: var(--brand);
+    }
+
+    /* Section cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 1.05rem;
+      color:#132a4a;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 8px;
+    }
+
+    /* Inputs - Updated to single column */
+    .group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    label {
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 6px 0;
+      color:#1f2d3d;
+    }
+    label small {
+      display:block;
+      font-style: normal;
+      color: var(--muted);
+      margin-left: 26px;
+      margin-top: 2px;
+      line-height: 1.25;
+      font-size: 0.85rem;
+    }
+
+    /* Buttons */
+    .actions {
+      display:flex;
+      gap:10px;
+      flex-wrap: wrap;
+      align-items:center;
+    }
+    button {
+      padding: 10px 16px;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .primary {
+      background: var(--brand);
+      color: #fff;
+      border-color: var(--brand);
+    }
+    .primary:hover { background: var(--brand-2); border-color: var(--brand-2); }
+    .ghost {
+      background: #f1f5fb;
+      color:#0f2744;
+      border-color:#e1e9f4;
+    }
+    .ghost:hover { background:#e6eef7; }
+
+    /* Result bar */
+    .result {
+      margin-top: 14px;
+      padding: 14px 16px;
+      font-weight: 700;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+    .green { background: #d4edda; color: #155724; }
+    .yellow { background: #fff176; color: #7a5e00; }
+    .orange { background: #ffcc80; color: #a04600; }
+    .red { background: #f8d7da; color: #721c24; }
+    .black { background: #2d2d2d; color: #fff; }
+
+    /* Summary box and copy */
+    #summaryBox {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border: 1px dashed #c8d6e8;
+      border-radius: 8px;
+      background: #ffffff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 0.95rem;
+      color:#0f2744;
+      box-shadow: var(--shadow);
+    }
+
+    /* Tables */
+    h4.section-title {
+      margin: 16px 0 6px;
+      color:#0f2744;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center; /* Center the titles */
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 24px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 10px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #e9f0f9; color:#0f2744; font-weight:700; }
+    tr:last-child td { border-bottom: none; }
+    .criteria-line {
+      display: block;
+      margin-top: 4px;
+    }
+
+    .disclaimer {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin: 4px 0 10px;
+      padding-left: 4px;
+      text-align: center; /* Center the disclaimer */
+    }
+
+    /* Subtle colored dividers for professionalism */
+    .divider {
+      height: 6px;
+      background: linear-gradient(90deg,#e5eefb, #f5f8fc);
+      border-radius: 6px;
+      margin: 16px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">Northern Health</div>
+    <div class="title">
+      <span class="scope"><i>SCOPE</i></span>: Stepwise Colonoscopy Algorithm to Optimization Preparation in Endoscopy
+    </div>
+  </div>
+
+  <!-- Input segments -->
+  <form id="riskForm">
+    <div class="card">
+      <h3>Major Risk Factors</h3>
+      <div class="group">
+        <label><input type="checkbox" class="major" value="CLD"> Chronic liver disease</label>
+        <label>
+          <input type="checkbox" class="major" value="CKD">
+          Chronic kidney disease
+          <small>(eGFR &lt;60 for &gt;3 months)</small>
+        </label>
+        <label>
+          <input type="checkbox" class="major" value="TCA">
+          Tricyclic antidepressants
+          <small>(e.g. amitriptyline, nortriptyline, clomipramine, desipramine, imipramine, doxepin, dosulepin)</small>
+        </label>
+        <label><input type="checkbox" class="major" value="Opiates"> Opiate use</label>
+        <label><input type="checkbox" class="major" value="prior poor prep"> Prior poor preparation</label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Minor Risk Factors</h3>
+      <div class="group">
+        <label><input type="checkbox" class="minor" value="Surgery"> Prior abdominal surgery</label>
+        <label><input type="checkbox" class="minor" value="Constipation"> Constipation</label>
+        <label><input type="checkbox" class="minor" value="Diabetes"> Diabetes</label>
+        <label>
+          <input type="checkbox" class="minor" value="GLP-1">
+          GLP-1 agonist
+          <small>(e.g. semaglutide, exenatide, dulaglutide, liraglutide, tirzepatide, lixisenatide)</small>
+        </label>
+        <label>
+          <input type="checkbox" class="minor" value="Anticholinergics">
+          Anticholinergics
+          <small>(e.g. oxybutynin, hyoscine, benztropine, quetiapine, doxepin, imipramine, chlorpromazine, clozapine, promethazine, diphenhydramine)</small>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Specific Scenarios</h3>
+      <div class="group">
+        <label><input type="checkbox" id="fail4L"> Previously failed 4L Moviprep bowel preparation <small>Previously tolerated full 4L/extended preparation with poor bowel preparation</small></label>
+        <label><input type="checkbox" id="intolerantMoviprep"> Previously intolerant/unable to complete Moviprep</label>
+        <label><input type="checkbox" id="fail4Pico"> Previously failed 4 sachet Picoprep bowel preparation</label>
+      </div>
+      <div class="divider"></div>
+      <div class="actions">
+        <button type="button" class="primary" onclick="calculate()">Determine Bowel Preparation</button>
+        <button type="button" class="ghost" onclick="clearAll()">Clear All</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Results -->
+  <div id="result" class="result"></div>
+  <div id="summaryBox"></div>
+  <div class="actions" style="margin-top:8px;">
+    <button type="button" class="ghost" onclick="copySummary()">Copy Summary</button>
+  </div>
+
+  <!-- Tables -->
+  <h4 class="section-title">Moviprep Risk Categories</h4>
+  <table>
+    <tr><th>Category</th><th>Criteria</th><th>Regimen</th></tr>
+    <tr class="green"><td>🟢 Moviprep Green Regimen</td><td>No risk factors</td><td>Standard 2L Moviprep</td></tr>
+    <tr class="yellow"><td>🟡 Moviprep Yellow Regimen</td><td>1 Minor Risk Factor</td><td>2L Moviprep + Bisacodyl 10mg for 2 days</td></tr>
+    <tr class="orange"><td>🟠 Moviprep Orange Regimen</td>
+        <td>1 Major Risk Factor<span class="criteria-line">OR</span>2 Minor Risk Factors</td>
+        <td>4L Moviprep</td></tr>
+    <tr class="red"><td>🔴 Moviprep Red Regimen</td>
+        <td>1 Major + any additional factor<span class="criteria-line">OR ≥3 Minor Risk Factors</span></td>
+        <td>4L Moviprep + Bisacodyl 10mg for 2 days prior</td></tr>
+    <tr class="black"><td>⚫ Moviprep Black Regimen</td><td>Previously failed 4L Moviprep</td><td>2L Moviprep two days prior + 4L Moviprep preparation + Bisacodyl 10mg for 2 days</td></tr>
+  </table>
+
+  <h4 class="section-title">Picoprep Risk Categories</h4>
+  <div class="disclaimer">*Not to be used in patients with renal failure (eGFR &lt;30) or heart failure with reduced ejection fraction (EF &lt;40% or NYHA class 3–4)</div>
+  <table>
+    <tr><th>Category</th><th>Criteria</th><th>Regimen</th></tr>
+    <tr class="green"><td>🟢 Picoprep Green Regimen</td><td>No risk factors</td><td>Standard 3 sachet Picoprep preparation</td></tr>
+    <tr class="yellow"><td>🟡 Picoprep Yellow Regimen</td><td>1 Minor Risk Factor</td><td>3 sachet Picoprep preparation + Bisacodyl 10mg for 2 days</td></tr>
+    <tr class="orange"><td>🟠 Picoprep Orange Regimen</td>
+        <td>1 Major Risk Factor<span class="criteria-line">OR</span>2 Minor Risk Factors</td>
+        <td>4 sachet Picoprep preparation</td></tr>
+    <tr class="red"><td>🔴 Picoprep Red Regimen</td>
+        <td>1 Major + any additional factor<span class="criteria-line">OR ≥3 Minor Risk Factors</span></td>
+        <td>4 sachet Picoprep preparation + Bisacodyl 10mg for 2 days</td></tr>
+    <tr class="black"><td>⚫ Picoprep Black Regimen</td><td>Previously failed 4 sachet Picoprep</td><td>2 sachet Picoprep 2 days prior + 4 sachet Picoprep + Bisacodyl 10mg for 2 days</td></tr>
+  </table>
+
+ <script>
+    function calculate() {
+      const majors = document.querySelectorAll('.major:checked');
+      const minors = document.querySelectorAll('.minor:checked');
+      const major = majors.length;
+      const minor = minors.length;
+      const failed4L = document.getElementById('fail4L').checked;
+      const intolerantMoviprep = document.getElementById('intolerantMoviprep').checked;
+      const failed4Pico = document.getElementById('fail4Pico').checked;
+
+      const resultDiv = document.getElementById('result');
+      let text = "";
+      let style = "";
+      let summary = "";
+
+      let riskFactors = [];
+      majors.forEach(cb => riskFactors.push(cb.value));
+      minors.forEach(cb => riskFactors.push(cb.value));
+
+      let notes = [];
+      if (failed4L) notes.push("Previous failed 4L Moviprep");
+      if (intolerantMoviprep) notes.push("Previous intolerant to Moviprep");
+      if (failed4Pico) notes.push("Previous failed 4 sachet Picoprep");
+
+      // MOVIPREP PATHWAY
+      if (failed4L) {
+        text = "⚫ Moviprep Black Regimen: 2L Moviprep two days prior + 4L Moviprep preparation + Bisacodyl 10mg for 2 days";
+        style = "black";
+        summary = `Moviprep Black Regimen | ${riskFactors.join(", ") || "No RF"} | ${notes.join(", ")}`;
+      } else if (!intolerantMoviprep) {
+        if ((major >= 1 && (major + minor) > 1) || minor >= 3) {
+          text = "🔴 Moviprep Red Regimen: 4L Moviprep + Bisacodyl 10mg for 2 days prior";
+          style = "red";
+          summary = `Moviprep Red Regimen | ${riskFactors.join(", ")} | ${notes.join(", ")}`;
+        } else if (major >= 1 || minor >= 2) {
+          text = "🟠 Moviprep Orange Regimen: 4L Moviprep";
+          style = "orange";
+          summary = `Moviprep Orange Regimen | ${riskFactors.join(", ")} | ${notes.join(", ")}`;
+        } else if (minor === 1) {
+          text = "🟡 Moviprep Yellow Regimen: 2L Moviprep + Bisacodyl 10mg for 2 days";
+          style = "yellow";
+          summary = `Moviprep Yellow Regimen | ${riskFactors.join(", ")} | ${notes.join(", ")}`;
+        } else {
+          text = "🟢 Moviprep Green Regimen: Standard 2L Moviprep";
+          style = "green";
+          summary = "Moviprep Green Regimen | No RF";
+        }
+      }
+
+      // PICOPREP PATHWAY (overrides Moviprep when intolerant or prior picoprep failure)
+      if (intolerantMoviprep || failed4Pico) {
+        if (failed4Pico) {
+          text = "⚫ Picoprep Black Regimen: 2 sachet Picoprep 2 days prior + 4 sachet Picoprep + Bisacodyl 10mg for 2 days";
+          style = "black";
+          summary = `Picoprep Black Regimen | ${riskFactors.join(", ")} | ${notes.join(", ")}`;
+        } else if ((major >= 1 && (major + minor) > 1) || minor >= 3) {
+          text = "🔴 Picoprep Red Regimen: 4 sachet Picoprep + Bisacodyl 10mg for 2 days";
+          style = "red";
+          summary = `Picoprep Red Regimen | ${riskFactors.join(", ")} | ${notes.join(", ")}`;
+        } else if (major >= 1 || minor >= 2) {
+          text = "🟠 Picoprep Orange Regimen: 4 sachet Picoprep";
+          style = "orange";
+          summary = `Picoprep Orange Regimen | ${riskFactors.join(", ")} | ${notes.join(", ")}`;
+        } else if (minor === 1) {
+          text = "🟡 Picoprep Yellow Regimen: 3 sachet Picoprep + Bisacodyl 10mg for 2 days";
+          style = "yellow";
+          summary = `Picoprep Yellow Regimen | ${riskFactors.join(", ")} | ${notes.join(", ")}`;
+        } else {
+          text = "🟢 Picoprep Green Regimen: Standard 3 sachet Picoprep";
+          style = "green";
+          summary = "Picoprep Green Regimen | No RF";
+        }
+      }
+
+      resultDiv.innerHTML = text;
+      resultDiv.className = "result " + style;
+      document.getElementById('summaryBox').innerText = summary;
+    }
+
+    function copySummary() {
+      const summaryText = document.getElementById('summaryBox').innerText;
+      if (!summaryText.trim()) return;
+      navigator.clipboard.writeText(summaryText).then(() => {
+        // Optionally provide feedback in future versions
+      }).catch(() => {
+        // ignore clipboard errors silently
+      });
+    }
+
+    function clearAll() {
+      document.querySelectorAll('input[type=checkbox]').forEach(cb => cb.checked = false);
+      document.getElementById('result').innerHTML = "";
+      document.getElementById('result').className = 'result';
+      document.getElementById('summaryBox').innerText = "";
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
